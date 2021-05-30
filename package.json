@@ -6,7 +6,6 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "tsc -p tsconfig.release.json",
-    "postbuild": "cp -R ./src/templates ./dist/templates && cp -R ./test/mocks ./dist/test/mocks",
     "format": "prettier --write .",
     "lint": "tsc --noEmit && eslint . --max-warnings=0 --ext .ts",
     "prod": "nodemon -r dotenv/config -r source-map-support/register ./dist/index.js",
