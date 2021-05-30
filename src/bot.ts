@@ -1,13 +1,21 @@
+import crypto from "crypto";
 import { Context, Telegraf } from "telegraf";
-import {
-  AvailabilitySearchParams,
-  AvailabilitySearchResults,
-  client as doctolibClient,
-} from "./clients/doctolib";
 
 const users = new Map();
-const bot = new Telegraf<Context>(process.env.TELEGRAM_BOT_TOKEN as string);
-let interval: NodeJS.Timeout;
+const token = process.env.TELEGRAM_BOT_TOKEN as string;
+
+function createSecretPath() {
+  return crypto
+    .createHash("sha3-256")
+    .update(token)
+    .update(process.version) // salt
+    .digest("hex");
+}
+
+const secretPath = createSecretPath();
+const bot = new Telegraf<Context>(token);
+
+bot.telegram.setWebhook(`${process.env.URL}/api/hooks/${secretPath}`);
 
 bot.start((ctx: Context) => {
   users.set(ctx.from?.id, ctx.chat?.id);
@@ -25,31 +33,4 @@ function broadcast(msg: string): void {
   });
 }
 
-async function searchAvailabilities(): Promise<AvailabilitySearchResults> {
-  const searchParams: AvailabilitySearchParams = {
-    startDate: new Date().toISOString().split("T")[0],
-    visitMotiveIds: [2836662],
-    agendaIds: [469719],
-    insuranceSector: "public",
-    practiceIds: [162056],
-    limit: 3,
-  };
-  const searchResults = await doctolibClient.searchAvailabilities(searchParams);
-  return searchResults;
-}
-
-function start(): void {
-  bot.launch();
-  interval = setInterval(async () => {
-    const searchResults = await searchAvailabilities();
-    const msg = `We found the following results for you: ${JSON.stringify(searchResults)}`;
-    broadcast(msg);
-  }, 3000);
-}
-
-function stop(reason: string): void {
-  clearInterval(interval);
-  bot.stop(reason);
-}
-
-export default { start, stop };
+export { broadcast, bot, secretPath };

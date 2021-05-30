@@ -1,5 +1,4 @@
 import repl from "repl";
-import bot from "../src/bot";
 import { client } from "../src/clients/doctolib";
 import server from "../src/server";
 
@@ -10,7 +9,6 @@ const replServer = repl.start({
 
 // attach app modules to the repl context
 replServer.context.server = server;
-replServer.context.bot = bot;
 replServer.context.client = client;
 
 /* eslint-disable no-console */
