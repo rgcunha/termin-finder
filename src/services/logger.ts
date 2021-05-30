@@ -19,7 +19,7 @@ function createLogger(): ILogger {
   const nativeLogger = winston.createLogger({
     level: process.env.LOG_LEVEL,
     format: winston.format.combine(...formats),
-    defaultMeta: { service: "vaccine-finder" },
+    defaultMeta: { service: "termin-finder" },
     transports: [new winston.transports.Console()],
   });
 

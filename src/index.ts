@@ -1,20 +1,19 @@
-import express from "express";
-import { Server } from "http";
-import healthController from "./controllers/health";
-import { errorLogger, requestLogger } from "./middleware/logger";
+import telegramBot from "./bot";
+import httpServer from "./server";
 
-const app: express.Application = express();
-const server: Server = new Server(app);
-const port = process.env.PORT || 3000;
+function start(): void {
+  httpServer.start();
+  telegramBot.start();
+}
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(requestLogger());
+function shutdown(reason: string): void {
+  /* eslint-disable no-console */
+  console.log(`Shuting down... reason: ${reason}`);
+  telegramBot.stop(reason);
+  httpServer.stop();
+}
 
-app.get("/api/health", healthController.get);
-app.use(errorLogger());
+process.once("SIGINT", () => shutdown("SIGINT"));
+process.once("SIGTERM", () => shutdown("SIGTERM"));
 
-/* eslint-disable no-console */
-server.listen(port, () => {
-  console.log(`listening on *:${port}`);
-});
+start();

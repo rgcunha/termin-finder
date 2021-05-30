@@ -1,6 +1,6 @@
-# Covid-19 Vaccine Finder
+# Termin Finder
 
-A Node.js service to find covid-19 vaccine appointments. Once an appointment has been found a notification will be sent to the Telegram bot: @Covid19VaccineFinderBot
+A Node.js service to find doctor appointments. Once an appointment has been found a notification will be sent to the Telegram bot: @TerminFinderBot
 
 ## Install
 
@@ -23,6 +23,6 @@ npm start
 The server runs on port `3001` by default unless a different value is specified in `PORT` env variable.
 
 ```sh
-docker build . -t vaccine-finder
-docker run -p 3001:3001 -t vaccine-finder
+docker build . -t termin-finder
+docker run -p 3001:3001 -t termin-finder
 ```

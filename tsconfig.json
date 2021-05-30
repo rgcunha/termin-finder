@@ -12,6 +12,6 @@
     "esModuleInterop": true,
     "noImplicitAny": true
   },
-  "include": ["src/**/*.ts", "typings/**/*.d.ts", "test/**/*.ts"],
+  "include": ["src/**/*.ts", "typings/**/*.d.ts", "bin/**/*.ts", "test/**/*.ts"],
   "exclude": ["node_modules"]
 }
