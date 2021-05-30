@@ -9,11 +9,12 @@ let interval: NodeJS.Timeout;
 
 function start(): void {
   httpServer.start();
+  const fetchInterval = parseInt(process.env.FETCH_INTERVAL as string, 10);
   interval = setInterval(async () => {
     const searchResults = await appointmentService.searchAvailabilities();
     const msg = `We found the following results for you: ${JSON.stringify(searchResults)}`;
     broadcast(msg);
-  }, 3000);
+  }, fetchInterval);
 }
 
 function shutdown(reason: string): void {
