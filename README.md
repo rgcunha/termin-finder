@@ -15,6 +15,7 @@ npm install
 The web server runs on port `3001` by default unless a different value is specified in `PORT` env variable.
 
 ```sh
+npm run tunnel
 npm start
 ```
 
