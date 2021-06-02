@@ -22,6 +22,11 @@ bot.start((ctx: Context) => {
   ctx.reply("Searching for appointments...");
 });
 
+bot.command("start", (ctx) => {
+  users.set(ctx.from?.id, ctx.chat?.id);
+  ctx.reply("Searching for appointments...");
+});
+
 bot.command("stop", (ctx) => {
   users.delete(ctx.from?.id);
   ctx.reply("No longer searching for appointments...");
@@ -29,7 +34,7 @@ bot.command("stop", (ctx) => {
 
 function broadcast(msg: string): void {
   users.forEach((__, chatId) => {
-    bot.telegram.sendMessage(chatId, msg);
+    bot.telegram.sendMessage(chatId, msg, { parse_mode: "HTML", disable_web_page_preview: true });
   });
 }
 
