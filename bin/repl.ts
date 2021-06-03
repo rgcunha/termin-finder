@@ -1,5 +1,6 @@
 import repl from "repl";
-import { client } from "../src/clients/doctolib";
+import { client as doctolibClient } from "../src/clients/doctolib";
+import { client as redisClient } from "../src/clients/redis";
 import server from "../src/server";
 import { appointmentService } from "../src/services/appointment";
 
@@ -10,8 +11,13 @@ const replServer = repl.start({
 
 // attach app modules to the repl context
 replServer.context.server = server;
-replServer.context.client = client;
-replServer.context.appointmentService = appointmentService;
+replServer.context.clients = {
+  doctolibClient,
+  redisClient,
+};
+replServer.context.services = {
+  appointmentService,
+};
 
 /* eslint-disable no-console */
 replServer.on("exit", () => {
