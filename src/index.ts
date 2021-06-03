@@ -27,6 +27,7 @@ function start(): void {
     const appointments = await appointmentService.searchVaccinationAppointments(startDate);
     sendAppointments(appointments);
   }, fetchInterval);
+  broadcast("Hello 👋!");
   httpServer.start();
   logger.info("HTTP Server: Ready");
 }
@@ -35,6 +36,7 @@ async function shutdown(reason: string): Promise<void> {
   logger.info(`Shuting down... reason: ${reason}`);
   httpServer.stop();
   clearInterval(interval);
+  broadcast("Going to sleep.. 😴");
   await redisClient.disconnect();
   logger.info("HTTP Server: Down");
 }
