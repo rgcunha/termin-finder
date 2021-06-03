@@ -3,6 +3,7 @@ import { client as doctolibClient } from "../src/clients/doctolib";
 import { client as redisClient } from "../src/clients/redis";
 import server from "../src/server";
 import { appointmentService } from "../src/services/appointment";
+import { userService } from "../src/services/user";
 
 // open the repl session
 const replServer = repl.start({
@@ -17,6 +18,7 @@ replServer.context.clients = {
 };
 replServer.context.services = {
   appointmentService,
+  userService,
 };
 
 /* eslint-disable no-console */
