@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { Context, Telegraf } from "telegraf";
+import { userService } from "./services/user";
 
-const users = new Map();
 const token = process.env.TELEGRAM_BOT_TOKEN as string;
 
 function createSecretPath() {
@@ -17,25 +17,33 @@ const bot = new Telegraf<Context>(token);
 
 bot.telegram.setWebhook(`${process.env.URL}/api/hooks/${secretPath}`);
 
-bot.start((ctx: Context) => {
-  users.set(ctx.from?.id, ctx.chat?.id);
-  ctx.reply("Searching for appointments...");
-});
-
-bot.command("start", (ctx) => {
-  users.set(ctx.from?.id, ctx.chat?.id);
-  ctx.reply("Searching for appointments...");
-});
-
-bot.command("stop", (ctx) => {
-  users.delete(ctx.from?.id);
-  ctx.reply("No longer searching for appointments...");
-});
-
-function broadcast(msg: string): void {
-  users.forEach((__, chatId) => {
-    bot.telegram.sendMessage(chatId, msg, { parse_mode: "HTML", disable_web_page_preview: true });
+async function broadcast(msg: string): Promise<void> {
+  const users = await userService.getUsers();
+  users.forEach((user) => {
+    bot.telegram.sendMessage(user.chatId, msg, {
+      parse_mode: "HTML",
+      disable_web_page_preview: true,
+    });
   });
 }
+
+function subscribeNotifications(ctx: Context) {
+  const user = {
+    id: String(ctx.from?.id),
+    chatId: String(ctx.chat?.id),
+  };
+  userService.addUser(user);
+  ctx.reply("Searching for appointments...");
+}
+
+function unsubscribeNotifications(ctx: Context) {
+  const userId = String(ctx.from?.id);
+  userService.delUser(userId);
+  ctx.reply("No longer searching for appointments...");
+}
+
+bot.start(subscribeNotifications);
+bot.command("start", subscribeNotifications);
+bot.command("stop", unsubscribeNotifications);
 
 export { broadcast, bot, secretPath };
