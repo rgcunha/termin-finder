@@ -1,1 +1,1 @@
-web: npm run prod
+web: node -r dotenv/config -r source-map-support/register ./dist/index.js

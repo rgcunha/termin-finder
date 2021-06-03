@@ -1,22 +1,22 @@
 import { broadcast } from "./bot";
-import createRedisClient from "./clients/redis";
+import { client as redisClient } from "./clients/redis";
 import httpServer from "./server";
 import createAppointmentService, { Appointment } from "./services/appointment";
 import createLogger from "./services/logger";
 
 const appointmentService = createAppointmentService();
 const logger = createLogger();
-const redisClient = createRedisClient();
 let interval: NodeJS.Timeout;
 
-async function sendAppointments(appointments: Appointment[]) {
-  appointments.forEach((appointment) => {
-    const { date, placeName, url } = appointment;
-    if (date) {
+async function sendAppointments(appointments: Appointment[]): Promise<void> {
+  const appointmentsWithDate = appointments.filter((appointment) => appointment.date);
+  await Promise.all(
+    appointmentsWithDate.map(async (appointment) => {
+      const { date, placeName, url } = appointment;
       const msg = `📆 Available slots found at <i>${placeName}</i> on <b>${date}</b>: ${url}`;
-      broadcast(msg);
-    }
-  });
+      await broadcast(msg);
+    })
+  );
 }
 
 function start(): void {
@@ -27,21 +27,24 @@ function start(): void {
     const appointments = await appointmentService.searchVaccinationAppointments(startDate);
     sendAppointments(appointments);
   }, fetchInterval);
-  broadcast("Hello 👋!");
+  broadcast("Hello 👋");
   httpServer.start();
-  logger.info("HTTP Server: Ready");
 }
 
-async function shutdown(reason: string): Promise<void> {
-  logger.info(`Shuting down... reason: ${reason}`);
-  httpServer.stop();
-  clearInterval(interval);
+function shutdown(reason: string): void {
+  // eslint-disable-next-line no-console
+  console.log(`Shuting down... reason: ${reason}`);
   broadcast("Going to sleep.. 😴");
-  await redisClient.disconnect();
-  logger.info("HTTP Server: Down");
+
+  setTimeout(() => {
+    clearInterval(interval);
+    httpServer.stop(() => {
+      redisClient.disconnect();
+      process.exit(0);
+    });
+  }, 5000);
 }
 
-process.once("SIGINT", async () => shutdown("SIGINT"));
-process.once("SIGTERM", async () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT")).on("SIGTERM", () => shutdown("SIGTERM"));
 
 start();

@@ -21,8 +21,8 @@ function start(): void {
   });
 }
 
-function stop(): void {
-  server.close();
+function stop(callback: () => void): void {
+  server.close(callback);
 }
 
 export default { start, stop };

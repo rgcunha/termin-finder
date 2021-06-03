@@ -16,11 +16,11 @@ function createClient(): IClient {
   const redisClient = new Redis(redisUrl);
 
   async function connect(): Promise<void> {
-    await redisClient.connect();
+    return redisClient.connect();
   }
 
   async function disconnect(): Promise<void> {
-    await redisClient.disconnect();
+    return redisClient.disconnect();
   }
 
   async function setKey<T>(key: string, value: T): Promise<void> {

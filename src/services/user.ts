@@ -1,4 +1,4 @@
-import createRedisClient from "../clients/redis";
+import { client as redisClient } from "../clients/redis";
 
 export type User = {
   id: string;
@@ -14,7 +14,6 @@ export type UserService = {
 };
 
 function createUserService(): UserService {
-  const redisClient = createRedisClient();
   const nsApplication = "termin-finder";
   const nsUser = `${nsApplication}:user`;
 
