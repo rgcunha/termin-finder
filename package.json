@@ -11,6 +11,7 @@
     "prod": "node -r dotenv/config -r source-map-support/register ./dist/index.js",
     "tunnel": "lt --port 3001 --subdomain rgcunha-termin-finder",
     "start": "nodemon -r dotenv/config --watch 'src/**/*.ts' --ignore 'src/**/*.test.ts' --exec 'ts-node' --files src/index.ts",
+    "start:jobs": "nodemon -r dotenv/config --watch 'src/**/*.ts' --ignore 'src/**/*.test.ts' --exec 'ts-node' --files src/jobs/index.ts",
     "test": "LOG_LEVEL=error jest",
     "repl": "ts-node -r dotenv/config --files ./bin/repl.ts"
   },
@@ -25,6 +26,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "bull": "^3.22.7",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-winston": "^4.0.5",
@@ -33,14 +35,17 @@
     "nodemon": "^2.0.7",
     "source-map-support": "^0.5.19",
     "telegraf": "^4.3.0",
+    "throng": "^5.0.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
+    "@types/bull": "^3.15.1",
     "@types/express": "^4.17.11",
     "@types/ioredis": "^4.26.4",
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.45",
+    "@types/throng": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "^4.15.0",
     "@typescript-eslint/parser": "^4.15.0",
     "eslint": "^7.19.0",
